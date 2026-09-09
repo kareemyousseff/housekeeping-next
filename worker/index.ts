@@ -10,6 +10,10 @@ export const worker = async () => {
     throw new Error("EMAIL_FROM is not set");
   }
   const emailFrom = from;
+  console.log("worker starting", {
+    emailFrom,
+    hasResendKey: Boolean(process.env.RESEND_API_KEY),
+  });
   let draining = false;
   let queued = false;
 
@@ -22,6 +26,8 @@ export const worker = async () => {
       if (outbox.length === 0) {
         return;
       }
+
+      console.log("worker draining", { count: outbox.length });
 
       for (const item of outbox) {
         try {
@@ -49,7 +55,12 @@ export const worker = async () => {
           const to = members.map((m) => m.user.email);
           const subject = occupied ? `${room} is occupied` : `${room} is free`;
 
-          await resend.emails.send({ from: emailFrom, to, subject, html: `<p>${subject}</p>` });
+          const result = await resend.emails.send({ from: emailFrom, to, subject, html: `<p>${subject}</p>` });
+          if (result.error) {
+            console.error("resend failed", result.error);
+            continue;
+          }
+          console.log("email sent", { to, subject });
           await prisma.outbox.update({
             where: { id: item.id },
             data: { processedAt: new Date() },
@@ -86,7 +97,9 @@ export const worker = async () => {
   const client = new Client({ connectionString: process.env.DATABASE_URL });
   await client.connect();
   await client.query("LISTEN outbox");
+  console.log("worker listening for outbox");
   client.on("notification", () => {
+    console.log("worker got outbox notification");
     drainSafe().catch(console.error);
   });
 };
