@@ -64,6 +64,8 @@ model Outbox {
   payload     Json
   createdAt   DateTime  @default(now())
   processedAt DateTime?
+  attempts    Int       @default(0)
+  lastError   String?
 
   @@index([processedAt])
 }

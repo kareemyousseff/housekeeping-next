@@ -4,6 +4,9 @@ COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
 ENV DATABASE_URL="postgresql://postgres:postgres@db:5432/housekeeping"
+ENV CI=true
+ARG SENTRY_AUTH_TOKEN
+ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
 RUN npx prisma generate
 RUN npx esbuild worker/index.ts --bundle --platform=node --outfile=dist/worker.js --tsconfig=tsconfig.json
 RUN npm run build

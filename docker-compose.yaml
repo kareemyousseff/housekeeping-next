@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:16
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -16,9 +17,11 @@ services:
       retries: 10
 
   web:
+    image: ${WEB_IMAGE:-housekeeping-web:local}
     build:
       context: .
       target: runner
+    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
@@ -31,9 +34,11 @@ services:
         condition: service_healthy
 
   worker:
+    image: ${WORKER_IMAGE:-housekeeping-worker:local}
     build:
       context: .
       target: worker
+    restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-housekeeping}
       RESEND_API_KEY: ${RESEND_API_KEY:-}

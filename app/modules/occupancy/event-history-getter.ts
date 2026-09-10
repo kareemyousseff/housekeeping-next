@@ -14,10 +14,12 @@ export async function getEventHistory(familyId: string) {
                 include: {
                     user: {
                         select: { name: true, email: true },
+                        
                     },
                 },
             },
         },
         orderBy: { startedAt: "desc" },
+        take: 6,
     });
 }
