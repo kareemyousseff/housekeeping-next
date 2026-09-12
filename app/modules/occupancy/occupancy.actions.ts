@@ -1,7 +1,8 @@
 "use server";
-import { getMembership, type Room } from "./occupancy.server";
+import { getMembership, OccupancyChange, type Room } from "./occupancy.server";
 import { prisma } from "../lib/prisma";
 import { notifyFamily } from "./occupancy-subs";
+import { occupantName } from "./occupancy.server";
 
 export async function setRoomOccupancy(
   familyId: string,
@@ -57,9 +58,19 @@ export async function setRoomOccupancy(
     });
   });
 
+  const change: OccupancyChange = {
+    id: crypto.randomUUID(),
+    familyId,
+    room,
+    occupied,
+    actorName: occupantName({ name: membership.user.name, email: membership.user.email }),
+    at: now.toISOString(),
+  };
+
   await prisma.$executeRaw`NOTIFY outbox`; 
-  await prisma.$executeRaw`SELECT pg_notify('occupancy_event', ${familyId})`;
+  await prisma.$executeRaw`SELECT pg_notify('occupancy_event', ${JSON.stringify(change)})`;
+
    
-  notifyFamily(familyId); 
+  notifyFamily(change); 
     return { ok: true as const }; 
 }

@@ -1,4 +1,5 @@
 import { Client } from "pg";
+import { OccupancyChange } from "./occupancy.server";
 
 type StreamController = ReadableStreamDefaultController<Uint8Array>;
 
@@ -18,7 +19,7 @@ export async function startListening() {
     await client.query("LISTEN occupancy_event");
     client.on("notification", (msg) => {
         if (msg.channel === "occupancy_event" && msg.payload) {
-            notifyFamily(msg.payload); // payload is the family id
+            notifyFamily(JSON.parse(msg.payload) as OccupancyChange); // payload is the family id
   }
 });}
 
@@ -34,14 +35,14 @@ export function removeListener(familyId: string, controller: StreamController) {
     listeners.get(familyId)?.delete(controller);
 }
 
-export function notifyFamily(familyId: string) {
+export function notifyFamily(change: OccupancyChange) {
     const encoder = new TextEncoder();
-    const payload = encoder.encode("data: hello\n\n");
-    for (const controller of listeners.get(familyId) ?? []) {
+    const payload = encoder.encode(`data: ${JSON.stringify(change)}\n\n`);
+    for (const controller of listeners.get(change.familyId) ?? []) {
         try {
             controller.enqueue(payload);
         } catch {
-            listeners.get(familyId)?.delete(controller);
+            listeners.get(change.familyId)?.delete(controller);
         }
     }
 }

@@ -20,7 +20,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ fami
         start(controller) {
             addListener(familyID, controller);
 
-            const data = encoder.encode("data: hello\n\n");
+            const data = encoder.encode( `data: ${JSON.stringify({ type: "ping" })}\n\n`);
             
                 try {
                     controller.enqueue(data);

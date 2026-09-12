@@ -11,8 +11,16 @@ export type Occupancy = {
     currentUserLocation: string | null;
     hasFamily: boolean;
 };
+export type OccupancyChange = {
+    id: string;
+    familyId: string;
+    room: "bathroom" | "kitchen";
+    occupied: boolean;
+    actorName: string;
+    at: string; // ISO timestamp
+  };
 
-function occupantName(user: { name: string | null; email: string }) {
+export function occupantName(user: { name: string | null; email: string }) {
     const name = user.name?.trim();
     return name || user.email;
 }
@@ -37,6 +45,14 @@ export async function getMembership(familyId: string) {
             userId_familyId: {
                 userId,
                 familyId,
+            },
+        },
+        include: {
+            user: {
+                select: {
+                    name: true,
+                    email: true,
+                },
             },
         },
     });
