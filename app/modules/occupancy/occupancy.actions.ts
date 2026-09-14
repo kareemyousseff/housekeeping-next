@@ -13,13 +13,21 @@ export async function setRoomOccupancy(
   if (!membership) {
     return { ok: false as const, error: "NOT_A_MEMBER" };
   }
-  if (!occupied && membership.location !== room) {
-    return { ok: false as const, error: "NOT_IN_ROOM" };
-  }
 
   const now = new Date();
 
-  await prisma.$transaction(async (tx) => {
+  try {
+    await prisma.$transaction(async (tx) => {
+    const locked = await tx.$queryRaw<{ location: string | null }[]>`
+  SELECT location FROM "FamilyMember"
+  WHERE id = ${membership.id}
+  FOR UPDATE
+`;
+    
+    if (!occupied && locked[0].location !== room) {
+      throw new Error("NOT_IN_ROOM");
+    }
+
     await tx.familyMember.update({
       where: { id: membership.id },
       data: {
@@ -54,9 +62,15 @@ export async function setRoomOccupancy(
           room,
           occupied,
         },
-      },
+        },
+      });
     });
-  });
+  } catch (error) {
+    if (error instanceof Error && error.message === "NOT_IN_ROOM") {
+      return { ok: false as const, error: "NOT_IN_ROOM" };
+    }
+    throw error;
+  }
 
   const change: OccupancyChange = {
     id: crypto.randomUUID(),
