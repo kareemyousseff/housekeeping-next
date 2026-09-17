@@ -1,15 +1,15 @@
-import { getEventHistory } from "../event-history-getter";
+"use client";
+import { useState } from "react";
+import { displayName } from "./event-history";
 
-function displayName(user: { name: string | null; email: string }) {
-    return user.name?.trim() || user.email;
-}
-
-export default async function EventHistory({ familyId }: { familyId: string }) {
-    const events = await getEventHistory(familyId);
+export default function EventHistoryList({ initialNumberOfEvents }: { initialNumberOfEvents: number }) {
+    const [numberOfEvents, setNumberOfEvents] = useState(initialNumberOfEvents);
 
     return (
+
+
         <div>
-            <h2>Event History</h2>
+             <h2>Event History</h2>
             {events.length === 0 ? (
                 <p>No occupancy history yet.</p>
             ) : (
@@ -21,6 +21,8 @@ export default async function EventHistory({ familyId }: { familyId: string }) {
                     ))}
                 </ul>
             )}
+            <button onClick={() => setNumberOfEvents(numberOfEvents + 6)}>Show more</button>
+            <button onClick={() => setNumberOfEvents(numberOfEvents - 6)}>Show less</button>
         </div>
     );
 }

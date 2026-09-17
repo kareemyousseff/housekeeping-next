@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Map from "../../modules/occupancy/components/map";
 import { getOccupancy } from "../../modules/occupancy/occupancy.server";
-import EventHistory from "../../modules/occupancy/components/event-history";
+import EventHistory from "../../modules/occupancy/components/history";
 import EventListener from "./eventlistener";
 
 export default async function MapPage({

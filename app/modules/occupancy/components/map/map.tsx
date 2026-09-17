@@ -1,7 +1,7 @@
 "use client";
 import Bathroom from "./bathroom";
 import Kitchen from "./kitchen";
-import type { Occupancy, OccupancyChange } from "../occupancy.server";
+import type { Occupancy, OccupancyChange } from "../../occupancy.server";
 import { useEffect, useState } from "react";
 
 export default function Map({

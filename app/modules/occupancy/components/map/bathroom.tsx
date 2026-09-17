@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { setRoomOccupancy } from "../occupancy.actions";
+import { setRoomOccupancy } from "../../occupancy.actions";
 
 const OCCUPANCY_ERRORS: Record<string, string> = {
   NOT_A_MEMBER: "You are not a member of this family.",
