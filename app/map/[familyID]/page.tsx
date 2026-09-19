@@ -3,6 +3,8 @@ import Map from "../../modules/occupancy/components/map";
 import { getOccupancy } from "../../modules/occupancy/occupancy.server";
 import EventHistory from "../../modules/occupancy/components/history";
 import EventListener from "./eventlistener";
+import Card from "../../components/card";
+import MapLayout from "../../components/map-layout";
 
 export default async function MapPage({
     params,
@@ -14,20 +16,20 @@ export default async function MapPage({
 
     if (!occupancy.hasFamily) {
         return (
-            <div>
+            <Card>
                 <h1>Map Page</h1>
                 <p>You are not a member of this family.</p>
                 <Link href="/families">Back to families</Link>
-            </div>
+            </Card>
         );
     }
 
     return (
-        <div>
-            <EventListener familyID={familyID} />
-            <EventHistory familyId={familyID} />
-            <h1>Map Page</h1>
-            <Map occupancy={occupancy} familyId={familyID} />
-        </div>
+        <MapLayout
+            title="Map Page"
+            live={<EventListener familyID={familyID} />}
+            history={<EventHistory familyId={familyID} />}
+            map={<Map occupancy={occupancy} familyId={familyID} />}
+        />
     );
 }

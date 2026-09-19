@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { getCurrentUserId } from "../modules/auth/auth";
 import { logout } from "../modules/auth/logout";
+import Wordmark from "./wordmark";
 
 export default async function Nav() {
     const userId = await getCurrentUserId();
 
     return (
         <nav className="app-nav">
-            <Link href="/">Home</Link>
+            <Wordmark />
             {userId ? (
                 <>
                     <Link href="/families">Families</Link>

@@ -2,11 +2,12 @@
 
 import { useActionState } from "react";
 import { login } from "../modules/auth/login";
+import Card from "../components/card";
 
 export default function Login() {
     const [state, formAction, isPending] = useActionState(login, null);
     return (
-        <div>
+        <Card className="card-auth">
             <h1>Login</h1>
             <form action={formAction}>
                 <input type="email" name="email" placeholder="Email" />
@@ -14,6 +15,6 @@ export default function Login() {
                 <button type="submit" disabled={isPending}>Login</button>
             </form>
             {state && <p>{state.message}</p>}
-        </div>
+        </Card>
     );
 }

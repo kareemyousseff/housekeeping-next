@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUserId } from "./modules/auth/auth";
 import Link from "next/link";
+import Hero from "./components/hero";
 
 export default async function Home() {
   const userId = await getCurrentUserId();
@@ -9,10 +10,12 @@ export default async function Home() {
     redirect("/families");
   }
   return (
-    <div>
-      <h1>Welcome to the Home Map Page</h1>
+    <Hero
+      title="Welcome to the Home Map Page"
+      subtitle="See who’s in the kitchen. Claim the bathroom. Keep the house in sync."
+    >
       <Link href="/login">Login</Link>
       <Link href="/signup">Signup</Link>
-    </div>
+    </Hero>
   );
 }

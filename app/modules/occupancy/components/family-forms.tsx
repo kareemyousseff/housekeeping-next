@@ -4,14 +4,15 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { createFamily } from "../../family/createfamily";
 import { joinFamily } from "../../family/joinfamily";
+import Card from "../../../components/card";
 
 export default function FamilyForms() {
     const [createState, createAction, createPending] = useActionState(createFamily, null);
     const [joinState, joinAction, joinPending] = useActionState(joinFamily, null);
 
     return (
-        <div>
-            <section>
+        <div className="family-forms">
+            <Card>
                 <h2>Create a family</h2>
                 <form action={createAction}>
                     <input type="text" name="name" placeholder="Family name" required />
@@ -30,9 +31,9 @@ export default function FamilyForms() {
                         <Link href={`/map/${createState.familyId}`}>Go to map</Link>
                     </p>
                 )}
-            </section>
+            </Card>
 
-            <section>
+            <Card>
                 <h2>Join a family</h2>
                 <form action={joinAction}>
                     <input type="text" name="familyId" placeholder="Paste family ID" required />
@@ -46,7 +47,7 @@ export default function FamilyForms() {
                         <Link href={`/map/${joinState.familyId}`}>Go to map</Link>
                     </p>
                 )}
-            </section>
+            </Card>
         </div>
     );
 }

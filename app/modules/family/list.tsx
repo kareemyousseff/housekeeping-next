@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listFamilies } from "./listfamilies";
+import Card from "../../components/card";
 
 export default async function ListFamilies() {
     const families = await listFamilies();
@@ -15,13 +16,13 @@ export default async function ListFamilies() {
     return (
         <div>
             {families.families.map((family) => (
-                <div key={family.id}>
+                <Card key={family.id}>
                     <h2>{family.name}</h2>
                     <p>
                         Family ID: <code>{family.id}</code>
                     </p>
                     <Link href={`/map/${family.id}`}>Go to map</Link>
-                </div>
+                </Card>
             ))}
         </div>
     );
